@@ -1,0 +1,176 @@
+.keranjang {
+  min-height: calc(100vh);
+}
+
+.kosong {
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn_belanja {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--cl2);
+  color: var(--t1);
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-inline: var(--padding-m);
+  padding-bottom: 40vh;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--cl-br1);
+  padding-bottom: 1rem;
+}
+
+.img {
+  width: 100px;
+  height: 100px;
+  border-radius: 0.75rem;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  background-color: var(--cl2);
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info h2 {
+    font-size: 1.25rem;
+    font-weight: normal;
+}
+
+.qty_control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qty_control button {
+  width: fit-content;
+  height: 32px;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--cl-br1);
+  background: transparent;
+  color: var(--cl1);
+}
+
+.subtotal_hapus {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.hapus {
+  border: none;
+  background: transparent;
+  color: red;
+  font-size: 0.85rem;
+  font-family: var(--f3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.con_ringkasan {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.ringkasan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: var(--padding-m);
+  padding-top: 4rem;
+  background: #573944;
+  background: radial-gradient(
+      circle,
+      var(--cl3) 0%,
+      var(--cl2) 100%
+  );
+  width: 100%;
+  color: var(--t1);
+}
+
+
+.total h2 {
+  font-size: 1.5rem;
+  font-weight: normal;
+  color: var(--t3);
+}
+
+.checkout {
+  background-color: var(--cl5);
+  color: var(--t1);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  height: 4rem;
+  font-family: var(--f2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clear {
+  background: var(--cl1);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  width: fit-content;
+  color: var(--t1);
+  font-size: 1.25rem;
+  font-family: var(--f2);
+}
+
+@media (max-width: 747px) {
+  .item {
+    flex-wrap: wrap;
+  }
+  .ringkasan {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .subtotal_hapus {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .checkout {
+    padding: 0rem 1.5rem;
+
+  }
+}

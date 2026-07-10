@@ -1,0 +1,315 @@
+.kelola {
+    width: 100%;
+    height: calc(100vh - 5rem - 10vh);
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    padding-top: 5rem;
+    background: radial-gradient(
+        circle,
+        var(--cl3) 0%,
+        var(--cl2) 100%
+    );
+    color: var(--cl4);
+    position: relative;
+    z-index: 0;
+}
+
+.headerRow,
+.tableWrap,
+.info,
+.formError {
+    position: relative;
+    z-index: 1;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.title {
+    font-size: 1.75rem;
+    font-family: var(--f2);
+    font-weight: normal;
+}
+
+.subtitle {
+    color: var(--t3);
+    font-size: 0.9rem;
+}
+
+.info {
+    color: var(--cl3);
+}
+
+.tableWrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--cl3);
+    border-radius: 0.75rem;
+    background-color: var(--cl1);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--cl3);
+}
+
+.table th {
+    font-weight: normal;
+    color: var(--t3);
+    font-family: var(--f2);
+    font-size: 0.85rem;
+    text-transform: capitalize;
+    letter-spacing: 0.03em;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr td p {
+    max-height: 43px;
+    overflow: hidden;
+}
+
+.thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 0.5rem;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    object-position: center;
+    border: 1px solid var(--cl3);
+}
+
+.actionBtns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btnPrimary,
+.btnSecondary,
+.btnDanger {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--cl3);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.btnPrimary {
+    background-color: var(--cl5);
+    color: var(--t1);
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btnSecondary {
+    background-color: transparent;
+    color: var(--cl4);
+}
+
+.btnDanger {
+    background-color: transparent;
+    color: #d94a4a;
+    border-color: #d94a4a;
+}
+
+.btnPrimary:disabled,
+.btnSecondary:disabled,
+.btnDanger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btnPrimary:hover:not(:disabled),
+.btnSecondary:hover:not(:disabled),
+.btnDanger:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.overlay {
+    width: 100%;
+    height: 100vh;
+    transition: 0.5s;
+    background-color: rgba(0, 0, 0, 0);
+    border-top: 1px solid var(--cl1);
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 999;
+    display: flex;
+    pointer-events: none;
+}
+
+.overlayOpen {
+    background-color: rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+.modalBox {
+    display: flex;
+    flex-direction: column;
+    color: var(--t2);
+    background-color: var(--cl2);
+    height: 75%;
+    width: 100%;
+    align-self: flex-end;
+    position: relative;
+    bottom: -100%;
+    transition: 0.5s;
+}
+
+.open_modalBox {
+    bottom: 0;
+}
+
+.modalHeader {
+    padding: 1rem 5rem;
+    border-bottom: 1px solid var(--cl3);
+    padding-top: 4rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    color: var(--t1);
+    align-items: center;
+}
+
+.modalHeader h1 {
+    font-weight: normal;
+    font-size: 1.5rem;
+    font-family: var(--f2);
+}
+
+.closeBtn {
+    width: 50px;
+    height: 50px;
+    background-color: var(--cl1);
+    color: var(--t1);
+    border: none;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: var(--padding-m);
+    overflow-y: auto;
+}
+
+.form p {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--cl3);
+}
+
+.input,.textarea,
+.inputFile {
+    background-color: var(--cl1);
+    border: 1px solid var(--cl3);
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    color: var(--cl4);
+    font-size: 1rem;
+    resize: none;
+}
+
+.inputFile::file-selector-button {
+    background-color: var(--cl2);
+    border: 1px solid var(--cl3);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-family: var(--f2);
+    color: var(--t1);
+    margin-right: 1rem;
+}
+
+.textarea {
+    width: 100% !important;
+}
+
+.previewWrap {
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.preview {
+    max-width: 100%;
+    max-height: 160px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+
+.formError {
+    color: #d94a4a;
+    font-size: 0.85rem;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 747px) {
+    .kelola {
+        padding: 1rem;
+        padding-top: 5rem;
+        margin-top: 10vh;
+    }
+
+    .row {
+        flex-direction: column;
+    }
+    
+    .headerRow {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modal {
+        padding: 0;
+    }
+
+    .modalHeader {
+        padding: 1rem var(--padding-m);
+        padding-top: 2rem;
+        padding-bottom: 1rem;
+    }
+}

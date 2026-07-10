@@ -1,0 +1,53 @@
+.password_page{
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #573944;
+    background: radial-gradient(
+        circle,
+        #573944 0%,
+        var(--cl2) 100%
+    );
+}
+
+.password_page h2 {
+    font-family: var(--f1);
+    color: var(--t1);
+
+    font-size: 2rem;
+}
+
+.password_page form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.password_page input {
+    background-color: var(--cl1);
+    border: 1px solid var(--cl3);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    color: var(--cl4);
+    font-size: 1rem;
+    margin-top: 1rem;
+}
+
+.con_btn {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 1rem;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+
+.password_page .btn {
+    border: none;
+    background-color: transparent;
+    color: var(--t1);
+    width: 60px;
+}
