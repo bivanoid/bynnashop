@@ -16,7 +16,7 @@ import FadeContent from "../../animation/FadeContent";
 import { useAlert } from "../../context/AlertContext";
 
 export default function Keranjang() {
-  const { cartItems, removeFromCart, updateQty, totalHarga, clearCart } =
+  const { cartItems, removeFromCart, updateQty, totalHarga } =
     useCart();
   const API_BASE = import.meta.env.VITE_API;
   const BACKEND_ROOT = API_BASE.replace(/\/api\/?$/, "");

@@ -4,7 +4,7 @@ import useProduk, { type Produk, type ProdukForm } from "../../hooks/useProduk";
 import FormProdukModal from "./Formprodukmodal";
 import Nav from "../../components/layouts/Nav";
 import CloudLayout from "../../components/commonts/CloudLayout";
-import { ArrowLeftIcon, Plus, ShoppingCartIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, Plus } from "@phosphor-icons/react";
 import AnimatedContent from "../../animation/AnimatedContent";
 
 export default function KelolaProduk() {
