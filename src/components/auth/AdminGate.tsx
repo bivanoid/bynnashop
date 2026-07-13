@@ -45,7 +45,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
           </button>
         </div>
       </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p cla style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }

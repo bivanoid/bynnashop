@@ -91,12 +91,14 @@
 }
 
 .qty_control button {
-  width: fit-content;
+  width: 32px;
   height: 32px;
   border-radius: 0.25rem;
   padding: 0.25rem;
   border: 1px solid var(--cl-br1);
   background: transparent;
+  display: grid;
+  place-items: center;
   color: var(--cl1);
 }
 
@@ -181,10 +183,34 @@
   .item {
     flex-wrap: wrap;
   }
+
+  .info h2 {
+      font-size: 1rem;
+  }
+
+  .qty_control p {
+      font-size: 0.75rem;
+  }
+
+  .qty_control button {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+  }
+
+  .qty_control span {
+      font-size: 0.75rem;
+  }
+
+  .subtotal_hapus :is(p, button) {
+      font-size: 0.75rem;
+  }
+
   .ringkasan {
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
+    height: fit-content;
   }
 
   .subtotal_hapus {
@@ -196,8 +222,28 @@
   }
 
   .checkout {
-    padding: 0rem 1.5rem;
+      background-color: var(--cl5);
+          height: 3rem;
+          border: none;
+          color: var(--t1);
+          font-family: var(--f3);
+          border-radius: 0.5rem;
+          font-size: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          border: 1px solid var(--cl3);
+  }
 
+  .total {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+  }
+
+  .total p {
+      font-size: 0.75rem;
   }
 
   .total h2 {

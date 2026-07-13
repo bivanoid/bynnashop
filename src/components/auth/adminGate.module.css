@@ -15,7 +15,7 @@
 .password_page h2 {
     font-family: var(--f1);
     color: var(--t1);
-
+    font-weight: normal;
     font-size: 2rem;
 }
 
@@ -41,7 +41,7 @@
     width: 100%;
     padding-left: 1rem;
     align-items: center;
-    margin-top: 3rem;
+    margin-top: 1rem;
 }
 
 
