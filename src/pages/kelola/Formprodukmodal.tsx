@@ -14,6 +14,65 @@ interface Props {
   onSubmit: (form: ProdukForm) => Promise<void> | void;
 }
 
+/**
+ * Konversi file gambar apapun (jpg/png/dll) menjadi file .webp
+ * memakai canvas, di sisi klien, sebelum diunggah ke Supabase Storage.
+ */
+function convertToWebp(file: File, quality = 0.8): Promise<File> {
+  // Kalau sudah .webp, tidak perlu dikonversi ulang
+  if (file.type === "image/webp") {
+    return Promise.resolve(file);
+  }
+
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error("Browser tidak mendukung konversi gambar"));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0);
+
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(objectUrl);
+
+          if (!blob) {
+            reject(new Error("Gagal mengonversi gambar ke webp"));
+            return;
+          }
+
+          // Kalau browser tidak mendukung encode webp, toBlob akan
+          // otomatis fallback ke image/png, jadi ekstensi disesuaikan
+          const isWebp = blob.type === "image/webp";
+          const ext = isWebp ? "webp" : (file.name.split(".").pop() || "png");
+          const baseName = file.name.replace(/\.[^.]+$/, "");
+
+          resolve(new File([blob], `${baseName}.${ext}`, { type: blob.type }));
+        },
+        "image/webp",
+        quality,
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Gagal memuat gambar untuk dikonversi"));
+    };
+
+    img.src = objectUrl;
+  });
+}
+
 export default function FormProdukModal({
   mode,
   initialData,
@@ -30,6 +89,7 @@ export default function FormProdukModal({
   const [gambar, setGambar] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [converting, setConverting] = useState(false);
   const { showAlert } = useAlert();
   useEffect(() => {
     const raf = requestAnimationFrame(() => setIsOpen(true));
@@ -52,10 +112,21 @@ export default function FormProdukModal({
     }
   }, [mode, initialData]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-    setGambar(file);
-    if (file) setPreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    setFormError(null);
+    setConverting(true);
+    try {
+      const webpFile = await convertToWebp(file);
+      setGambar(webpFile);
+      setPreview(URL.createObjectURL(webpFile));
+    } catch (err: any) {
+      setFormError(err.message ?? "Gagal memproses gambar");
+    } finally {
+      setConverting(false);
+    }
   };
 
   const harga = Number(hargaBarang) || 0;
@@ -128,12 +199,13 @@ export default function FormProdukModal({
             </div>
           )}
           <label className={s.label}>
-            Gambar Produk
+            Gambar Produk {converting && <span className={s.hintText}>(mengonversi ke webp...)</span>}
             <input
               className={s.inputFile}
               type="file"
               accept="image/*"
               onChange={handleFileChange}
+              disabled={converting}
             />
           </label>
           <label className={s.label}>
@@ -214,8 +286,8 @@ export default function FormProdukModal({
             >
               Batal
             </button>*/}
-            <button type="submit" className={s.submit} disabled={saving}>
-              {saving ? "Menyimpan..." : "Simpan"}
+            <button type="submit" className={s.submit} disabled={saving || converting}>
+              {converting ? "Memproses gambar..." : saving ? "Menyimpan..." : "Simpan"}
             </button>
           </div>
         </form>
