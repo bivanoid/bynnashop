@@ -61,6 +61,7 @@
     text-align: center;
     color: var(--t3);
     font-weight: normal;
+    padding-inline: var(--padding-m);
 }
 
 .hero p:nth-child(1) {
