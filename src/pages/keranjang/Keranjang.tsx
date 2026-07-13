@@ -2,8 +2,11 @@ import { useCart } from "../../context/CartContext";
 import s from "./keranjang.module.css";
 import Nav from "../../components/layouts/Nav";
 import CloudLayout from "../../components/commonts/CloudLayout";
+import { supabase } from "../../lib/supabase";
+import { getGambarUrl } from "../../hooks/useProduk";
 import {
   ArrowLeftIcon,
+  EmptyIcon,
   MinusIcon,
   PlusIcon,
   TrashIcon,
@@ -14,38 +17,56 @@ import {
 import AnimatedContent from "../../animation/AnimatedContent";
 import FadeContent from "../../animation/FadeContent";
 import { useAlert } from "../../context/AlertContext";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Keranjang() {
-  const { cartItems, removeFromCart, updateQty, totalHarga } =
+  const { cartItems, removeFromCart, updateQty, totalHarga, clearCart } =
     useCart();
-  const API_BASE = import.meta.env.VITE_API;
-  const BACKEND_ROOT = API_BASE.replace(/\/api\/?$/, "");
   const FALLBACK_IMG = "../../assets/img/alert.webp";
   const WA_NUMBER = import.meta.env.VITE_WA;
   const { showAlert } = useAlert();
+  const [processing, setProcessing] = useState(false);
 
-  const checkoutWhatsapp = () => {
+  const checkoutWhatsapp = async () => {
     if (cartItems.length === 0) {
       showAlert((<WarningIcon size={24} weight="duotone"/>), "Keranjang masih kosong")
       return;
     }
 
-    const pesan = cartItems
-      .map((item, index) => {
-        const hargaFinal =
-          item.diskonBarang === 0
-            ? item.hargaBarang
-            : (item.totalDiskon ?? item.hargaBarang);
+    setProcessing(true);
+    try {
+      const hasil = await Promise.all(
+        cartItems.map((item) =>
+          supabase.rpc("kurangi_stok", { item_id: item.id, jumlah: item.qty }),
+        ),
+      );
 
-        const subtotal = hargaFinal * item.qty;
+      const adaError = hasil.find((r) => r.error);
+      if (adaError?.error) {
+        showAlert(
+          (<WarningIcon size={24} weight="duotone" />),
+          "Gagal memperbarui stok, coba lagi",
+        );
+        return;
+      }
 
-        return `${index + 1}. ${item.namaBarang}
+      const pesan = cartItems
+        .map((item, index) => {
+          const hargaFinal =
+            item.diskonBarang === 0
+              ? item.hargaBarang
+              : (item.totalDiskon ?? item.hargaBarang);
+
+          const subtotal = hargaFinal * item.qty;
+
+          return `${index + 1}. ${item.namaBarang}
   Jumlah : ${item.qty}
   Subtotal : Rp${subtotal.toLocaleString("id-ID")}`;
-      })
-      .join("\n\n");
+        })
+        .join("\n\n");
 
-    const text = `Halo, saya ingin memesan barang berikut.
+      const text = `Halo, saya ingin memesan barang berikut.
 
   ${pesan}
 
@@ -54,11 +75,14 @@ export default function Keranjang() {
   Rp${totalHarga.toLocaleString("id-ID")}
 
   Terima kasih.`;
-
-    window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`,
-      "_blank",
-    );
+      window.open(
+        `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`,
+        "_blank",
+      );
+      clearCart();
+    } finally {
+      setProcessing(false);
+    }
   };
 
   return (
@@ -66,14 +90,16 @@ export default function Keranjang() {
       <Nav
         left={<ArrowLeftIcon size={24} weight="duotone" />}
         leftAct="/"
-        title="Bynna'shop Charts"
+        title="Keranjang"
         right={<UserIcon size={24} weight="duotone" />}
         rightAct="/adminnyasabrina"
       />
       {cartItems.length === 0 ? (
-        <p className={s.kosong}>
-          Saat ini anda <br /> tidak memesan apa-apaa
-        </p>
+        <div className={s.kosong}>
+          <EmptyIcon size={46} weight="duotone" />
+          <p><span>Keranjangmu kosong nih</span> <br />Coba deh pesen sesuatu :3</p>
+          <Link to={"/"}>Beranda</Link>
+        </div>
       ) : (
         <FadeContent>
           <div className={s.list}>
@@ -86,11 +112,7 @@ export default function Keranjang() {
                 <div className={s.item} key={item.id}>
                   <img
                     className={s.img}
-                    src={
-                      item.gambar
-                        ? `${BACKEND_ROOT}/uploads/${item.gambar}`
-                        : FALLBACK_IMG
-                    }
+                    src={getGambarUrl(item.gambar) ?? FALLBACK_IMG}
                     alt={item.namaBarang}
                     loading="lazy"
                     onError={(e) => {
@@ -98,6 +120,9 @@ export default function Keranjang() {
                     }}
                   />
                   <div className={s.info}>
+                    <span className={s.diskon} style={{display: item.diskonBarang ? "block" : "none"}}>
+                      Diskon {item.diskonBarang}%
+                    </span>
                     <h2>{item.namaBarang}</h2>
                     <div className={s.qty_control}>
                       <p>Rp.{hargaFinal.toLocaleString("id-ID")}</p>
@@ -151,8 +176,9 @@ export default function Keranjang() {
             <p>Total Belanja</p>
             <h2>Rp.{totalHarga.toLocaleString("id-ID")}</h2>
           </div>
-          <button className={s.checkout} onClick={checkoutWhatsapp}>
-            Chat Whatsapp <WhatsappLogoIcon size={24} weight="duotone" />
+          <button className={s.checkout} onClick={checkoutWhatsapp} disabled={processing}>
+            {processing ? "Memproses..." : "Chat"}{" "}
+            <WhatsappLogoIcon size={24} weight="duotone" />
           </button>
         </div>
       </AnimatedContent>

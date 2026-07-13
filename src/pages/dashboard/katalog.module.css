@@ -4,19 +4,68 @@
     height: fit-content;
     background-color: var(--cl1);
     padding-top: 1rem;
+    position: relative;
 }
 
-.informasi {
-    width: calc(100% - calc(var(--padding-m) * 2));
-    background-color: var(--cl2);
-    padding: 1.25rem;
+.con_search {
+    width: calc(100%);
+    background-color: var(--cl1);
     border-radius: 0.5rem;
-    border: 1px solid var(--cl3);
     display: grid;
     place-items: center;
     color: var(--cl4);
-    margin-inline: var(--padding-m);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    padding: 0.5rem var(--padding-m);
 }
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 70px;
+  padding: 1rem;
+  gap: 8px;
+  background-color: var(--cl2);
+  border-radius: 0.5rem;
+  border: 1px solid var(--cl3);
+  color: var(--cl4);
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.95rem;
+  background: transparent;
+  color: var(--t1);
+}
+
+.searchBtn, .clearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.searchBtn {
+  background:var(--cl3); /* sesuaikan warna brand kamu */
+  color: #fff;
+}
+
+.notFound {
+  text-align: center;
+  width: 100%;
+  padding: 24px;
+  color: #888;
+}
+
 
 .con_items {
     display: grid;
@@ -33,11 +82,28 @@
     display: flex;
     flex-direction: column;
     gap: 0rem;
+    position: relative;
     height: auto;
     /*max-height: 450px;*/
     border: 1px solid var(--cl3);
     color: var(--t1);
     background-color: var(--cl2);
+    overflow: hidden;
+}
+
+.diskon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--success);
+    padding: 0.5rem 1rem;
+    color: var(--t2);
+    font-family: var(--f3);
+    font-weight: bold;
+    font-size: 1.25rem;
+    border-left: 0.5rem solid var(--cl2);
+    border-bottom: 0.5rem solid var(--cl2);
+    border-bottom-left-radius: 20px;
 }
 
 .img {
@@ -82,6 +148,38 @@
     background-color: var(--cl1);
 }*/
 
+.habis {
+  pointer-events: none; /* opsional: biar tidak bisa diklik kalau stok habis */
+}
+
+.badgeHabis {
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  background: #2C1C2FC4;
+  color:var(--t1);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.badgeHabis p {
+    font-size: 1.5rem;
+    color: var(--t1);
+    font-family: var(--f2);
+    font-weight: normal;
+    rotate: -12deg;
+    width: auto;
+    aspect-ratio: 1/1;
+    padding: 1rem;
+    background-color: #5b414b90;
+    backdrop-filter: blur(5px);
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+}
 
 
 @media (max-width:747px) {

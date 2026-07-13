@@ -1,94 +1,112 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { supabase } from "../lib/supabase";
 
-// Sesuaikan dengan lokasi backend kamu
-const API_BASE = import.meta.env.VITE_API;
-// misal di file util, atau di atas useProduk.ts
-const API_ROOT = API_BASE.replace(/\/api\/?$/, ""); // buang "/api" di ujung
-export const getGambarUrl = (gambar: string) => `${API_ROOT}/uploads/${gambar}`;
+const BUCKET = import.meta.env.VITE_SUPABASE_BUCKET_KEY as string;
 
 export interface Produk {
   id: number;
   nama_barang: string;
   deskripsi_barang: string | null;
+  gambar: string | null;
   harga_barang: number;
   diskon_barang: number;
   stok_barang: number;
   total_diskon: number;
-  gambar: string;
 }
 
-export type ProdukForm = {
+export interface ProdukForm {
   nama_barang: string;
   deskripsi_barang: string;
-  harga_barang: number | string;
-  diskon_barang: number | string;
-  stok_barang: number | string;
-  gambar?: File | null; // file baru (opsional saat edit)
-};
+  harga_barang: string | number;
+  diskon_barang: string | number;
+  stok_barang: string | number;
+  gambar: File | null;
+}
 
-// Helper: apapun yang dilempar (Error, string, objek, dll) selalu
-// dikonversi jadi string, biar aman di-render di JSX.
-function toErrorMessage(err: unknown): string {
-  if (err instanceof Error) return err.message;
-  if (typeof err === "string") return err;
-  try {
-    return JSON.stringify(err);
-  } catch {
-    return "Terjadi kesalahan";
-  }
+export function getGambarUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function uploadGambar(file: File): Promise<string> {
+  const ext = file.name.split(".").pop() || "webp";
+  const fileName = `produk_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+  const { error } = await supabase.storage.from(BUCKET).upload(fileName, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+
+  if (error) throw new Error(`Gagal mengunggah gambar: ${error.message}`);
+  return fileName;
+}
+
+async function hapusGambar(path: string | null | undefined) {
+  if (!path) return;
+  await supabase.storage.from(BUCKET).remove([path]);
+}
+
+function hitungTotalDiskon(harga: number, diskon: number) {
+  return Math.max(0, Math.round(harga - (harga * diskon) / 100));
 }
 
 export default function useProduk() {
   const [data, setData] = useState<Produk[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // status khusus untuk aksi tambah/edit/hapus (biar bisa munculin spinner di modal)
   const [saving, setSaving] = useState(false);
 
-  const fetchProduk = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
-    try {
-      const res = await fetch(`${API_BASE}/getProduk.php`);
-      if (!res.ok) throw new Error("Gagal mengambil data produk");
-      const result = await res.json();
-      setData(result);
-    } catch (err) {
-      setError(toErrorMessage(err));
-    } finally {
-      setLoading(false);
+
+    const { data: rows, error } = await supabase
+      .from("items")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setData((rows ?? []) as Produk[]);
     }
+    setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchProduk();
-  }, [fetchProduk]);
-
-  const buildFormData = (form: ProdukForm, id?: number) => {
-    const fd = new FormData();
-    if (id) fd.append("id", String(id));
-    fd.append("nama_barang", form.nama_barang);
-    fd.append("deskripsi_barang", form.deskripsi_barang ?? "");
-    fd.append("harga_barang", String(form.harga_barang));
-    fd.append("diskon_barang", String(form.diskon_barang || 0));
-    fd.append("stok_barang", String(form.stok_barang || 0));
-    if (form.gambar) fd.append("gambar", form.gambar);
-    return fd;
-  };
+    fetchData();
+  }, [fetchData]);
 
   const tambahProduk = async (form: ProdukForm) => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_BASE}/tambahProduk.php`, {
-        method: "POST",
-        body: buildFormData(form),
-      });
-      const result = await res.json();
-      if (!res.ok || result?.status === "error") {
-        throw new Error(result?.message ?? "Gagal menambah produk");
+      const harga = Number(form.harga_barang) || 0;
+      const diskon = Number(form.diskon_barang) || 0;
+      const stok = Number(form.stok_barang) || 0;
+
+      let gambarPath: string | null = null;
+      if (form.gambar) {
+        gambarPath = await uploadGambar(form.gambar);
       }
-      await fetchProduk();
-      return true;
+
+      const { data: inserted, error } = await supabase
+        .from("items")
+        .insert({
+          nama_barang: form.nama_barang,
+          deskripsi_barang: form.deskripsi_barang || null,
+          gambar: gambarPath,
+          harga_barang: harga,
+          diskon_barang: diskon,
+          stok_barang: stok,
+          total_diskon: hitungTotalDiskon(harga, diskon),
+        })
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+
+      setData((prev) => [inserted as Produk, ...prev]);
     } finally {
       setSaving(false);
     }
@@ -97,48 +115,57 @@ export default function useProduk() {
   const editProduk = async (id: number, form: ProdukForm) => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_BASE}/updateProduk.php`, {
-        method: "POST",
-        body: buildFormData(form, id),
-      });
-      const result = await res.json();
-      if (!res.ok || result?.status === "error") {
-        throw new Error(result?.message ?? "Gagal mengubah produk");
+      const harga = Number(form.harga_barang) || 0;
+      const diskon = Number(form.diskon_barang) || 0;
+      const stok = Number(form.stok_barang) || 0;
+
+      const existing = data.find((item) => item.id === id);
+      let gambarPath = existing?.gambar ?? null;
+
+      if (form.gambar) {
+        gambarPath = await uploadGambar(form.gambar);
+        if (existing?.gambar) {
+          await hapusGambar(existing.gambar);
+        }
       }
-      await fetchProduk();
-      return true;
+
+      const { data: updated, error } = await supabase
+        .from("items")
+        .update({
+          nama_barang: form.nama_barang,
+          deskripsi_barang: form.deskripsi_barang || null,
+          gambar: gambarPath,
+          harga_barang: harga,
+          diskon_barang: diskon,
+          stok_barang: stok,
+          total_diskon: hitungTotalDiskon(harga, diskon),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+
+      setData((prev) =>
+        prev.map((item) => (item.id === id ? (updated as Produk) : item)),
+      );
     } finally {
       setSaving(false);
     }
   };
 
   const hapusProduk = async (id: number) => {
-    setSaving(true);
-    try {
-      const res = await fetch(`${API_BASE}/hapusProduk.php`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      const result = await res.json();
-      if (!res.ok || result?.status === "error") {
-        throw new Error(result?.message ?? "Gagal menghapus produk");
-      }
-      await fetchProduk();
-      return true;
-    } finally {
-      setSaving(false);
+    const existing = data.find((item) => item.id === id);
+
+    const { error } = await supabase.from("items").delete().eq("id", id);
+    if (error) throw new Error(error.message);
+
+    if (existing?.gambar) {
+      await hapusGambar(existing.gambar);
     }
+
+    setData((prev) => prev.filter((item) => item.id !== id));
   };
 
-  return {
-    data,
-    loading,
-    error,
-    saving,
-    fetchProduk,
-    tambahProduk,
-    editProduk,
-    hapusProduk,
-  };
+  return { data, loading, error, saving, tambahProduk, editProduk, hapusProduk };
 }

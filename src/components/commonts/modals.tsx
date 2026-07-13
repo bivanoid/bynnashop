@@ -6,19 +6,19 @@ import { CheckIcon, MinusIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
 import { BasketIcon } from "@phosphor-icons/react/dist/ssr";
 import { useAlert } from "../../context/AlertContext";
 import { createPortal } from "react-dom";
+import { getGambarUrl } from "../../hooks/useProduk";
+
 interface props {
   item: any;
   onClose: () => void;
 }
+const FALLBACK_IMG = "../../assets/img/alert.webp";
 
 export default function Modals({ item, onClose }: props) {
-  const [isOpen, setIsOpen] = useState(false); 
+  const [isOpen, setIsOpen] = useState(false);
   const [count, setCount] = useState<number>(1);
   const [min, setMin] = useState<boolean>(false);
   const [max, setMax] = useState<boolean>(false);
-  const API_BASE = import.meta.env.VITE_API;
-  const BACKEND_ROOT = API_BASE.replace(/\/api\/?$/, "");
-  const FALLBACK_IMG = "../../assets/img/alert.webp";
   const { showAlert } = useAlert();
   const {
     id,
@@ -30,37 +30,30 @@ export default function Modals({ item, onClose }: props) {
     stok_barang: stokBarang,
     total_diskon: totalDiskon,
   } = item;
-
   const hargaFinalnya =
     diskonBarang === 0 ? hargaBarang : (totalDiskon ?? hargaBarang);
-
   useEffect(() => {
     const raf = requestAnimationFrame(() => setIsOpen(true));
     return () => cancelAnimationFrame(raf);
   }, []);
-
   function handleClose() {
     setIsOpen(false);
-    setTimeout(() => onClose(), 500); 
+    setTimeout(() => onClose(), 500);
   }
-
   useEffect(() => {
     setMin(count === 0);
     setMax(count === stokBarang);
   }, [count, stokBarang]);
-
   const { addToCart } = useCart();
-  
   function handleAddToCart() {
     addToCart(
       { id, namaBarang, gambar, hargaBarang, diskonBarang, totalDiskon, stokBarang },
       count,
     );
-    showAlert((<CheckIcon size={24} weight="duotone"/>), `${namaBarang} ada di keranjang`);
+    showAlert(<CheckIcon size={24} weight="duotone" />, `${namaBarang} ada di keranjang`);
     handleClose();
   }
-
-  return createPortal (
+  return createPortal(
     <div
       className={`${s.overlay} ${isOpen ? s.overlayOpen : ""}`}
       onClick={handleClose}
@@ -81,19 +74,15 @@ export default function Modals({ item, onClose }: props) {
             </p>
           </div>
           <button className={s.close_btn} onClick={handleClose}>
-            <XIcon size={24} weight="duotone"/>
+            <XIcon size={24} weight="duotone" />
           </button>
         </div>
         <div className={s.con_content}>
           <div className={s.con_img_content}>
             <img
               className={s.img}
-              src={
-                item.gambar
-                  ? `${BACKEND_ROOT}/uploads/${item.gambar}`
-                  : FALLBACK_IMG
-              }
-              alt={item.nama_barang}
+              src={getGambarUrl(gambar) ?? FALLBACK_IMG}
+              alt={namaBarang}
               loading="lazy"
               onError={(e) => {
                 e.currentTarget.src = FALLBACK_IMG;
@@ -106,12 +95,16 @@ export default function Modals({ item, onClose }: props) {
           </div>
           <div className={s.con_button}>
             <div className={s.con_stok}>
-              <button disabled={min} onClick={() => setCount(count - 1)}><MinusIcon size={24} weight="duotone"/></button>
+              <button disabled={min} onClick={() => setCount(count - 1)}>
+                <MinusIcon size={24} weight="duotone" />
+              </button>
               <p>Dipesan : {count}</p>
-              <button disabled={max} onClick={() => setCount(count + 1)}><PlusIcon size={24} weight="duotone"/></button>
+              <button disabled={max} onClick={() => setCount(count + 1)}>
+                <PlusIcon size={24} weight="duotone" />
+              </button>
             </div>
             <button className={s.add} onClick={handleAddToCart}>
-              Pesan Sekarang <BasketIcon size={24} weight="duotone"/>
+              Pesan Sekarang <BasketIcon size={24} weight="duotone" />
             </button>
           </div>
         </div>

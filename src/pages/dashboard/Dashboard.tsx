@@ -12,7 +12,7 @@ export default function Dashboard() {
     <div className={s.dashboard}>
       <Nav
         left={<InstagramLogoIcon size={28} weight="duotone"/>}
-        leftAct="/"
+        leftAct="https://www.instagram.com/bynnaowll?igsh=Nm13eHNraGJmN2Z2"
         title="Bynna's Shop"
         right={<ShoppingCartIcon size={24} weight="duotone"/>}
         rightAct="/keranjang"

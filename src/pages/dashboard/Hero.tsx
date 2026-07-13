@@ -1,7 +1,7 @@
 import s from "./hero.module.css";
 import makanan from "../../assets/img/aa.png";
 import CloudLayout from "../../components/commonts/CloudLayout";
-import { ArrowDownIcon } from "@phosphor-icons/react";
+import { ArrowDownIcon, StarFour } from "@phosphor-icons/react";
 import AnimatedContent from "../../animation/AnimatedContent";
 
 export default function Hero() {
@@ -32,7 +32,7 @@ export default function Hero() {
         <div className={s.con_hero}>
           <div className={s.starr}>
             <AnimatedContent  delay={0.35} duration={0.7} scale={0} distance={0}>
-              <p>✦</p>
+              <p><StarFour size={62} weight="duotone"/></p>
             </AnimatedContent>
           </div>
           <AnimatedContent delay={0.5} duration={1} distance={20}>

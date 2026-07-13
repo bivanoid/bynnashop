@@ -83,16 +83,23 @@ export default function FormProdukModal({
       return;
     }
 
-    await onSubmit({
-      nama_barang: namaBarang.trim(),
-      deskripsi_barang: deskripsiBarang.trim(),
-      harga_barang: hargaBarang,
-      diskon_barang: diskonBarang || 0,
-      stok_barang: stokBarang || 0,
-      gambar,
-    });
+    try {
+      await onSubmit({
+        nama_barang: namaBarang.trim(),
+        deskripsi_barang: deskripsiBarang.trim(),
+        harga_barang: hargaBarang,
+        diskon_barang: diskonBarang || 0,
+        stok_barang: stokBarang || 0,
+        gambar,
+      });
 
-    showAlert((<CheckIcon size={24} weight="duotone"/>), `${namaBarang} Berhasil ditambahkan`);
+      showAlert(
+        (<CheckIcon size={24} weight="duotone"/>),
+        `${namaBarang} ${mode === "tambah" ? "berhasil ditambahkan" : "berhasil diperbarui"}`,
+      );
+    } catch (err: any) {
+      throw err;
+    }
   };
 
   return (
@@ -196,20 +203,18 @@ export default function FormProdukModal({
             </p>
           )}
 
-          
-
           {formError && <p className={s.formError}>{formError}</p>}
 
           <div className={s.modalActions}>
-            <button
+            {/*<button
               type="button"
               className={s.btnSecondary}
               onClick={handleClose}
               disabled={saving}
             >
               Batal
-            </button>
-            <button type="submit" className={s.btnPrimary} disabled={saving}>
+            </button>*/}
+            <button type="submit" className={s.submit} disabled={saving}>
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
           </div>
