@@ -1,26 +1,48 @@
 import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(_req: any, res: any) {
-  const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL!,
-    import.meta.env.SUPABASE_SECRET_KEY!
-  );
+  try {
+    const url = import.meta.env.env.VITE_SUPABASE_URL;
+    const secret = import.meta.env.SUPABASE_SECRET_KEY;
 
-  const { data, error } = await supabase
-    .from("keep_alive")
-    .select("id")
-    .eq("id", 1)
-    .single();
+    if (!url) {
+      return res.status(500).json({
+        success: false,
+        error: "VITE_SUPABASE_URL tidak ditemukan"
+      });
+    }
 
-  if (error) {
+    if (!secret) {
+      return res.status(500).json({
+        success: false,
+        error: "SUPABASE_SECRET_KEY tidak ditemukan"
+      });
+    }
+
+    const supabase = createClient(url, secret);
+
+    const { data, error } = await supabase
+      .from("keep_alive")
+      .select("id")
+      .eq("id", 1)
+      .single();
+
+    if (error) {
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+
+  } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : "Unknown error"
     });
   }
-
-  return res.status(200).json({
-    success: true,
-    data,
-  });
 }
