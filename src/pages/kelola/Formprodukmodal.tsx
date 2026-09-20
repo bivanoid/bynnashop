@@ -14,12 +14,7 @@ interface Props {
   onSubmit: (form: ProdukForm) => Promise<void> | void;
 }
 
-/**
- * Konversi file gambar apapun (jpg/png/dll) menjadi file .webp
- * memakai canvas, di sisi klien, sebelum diunggah ke Supabase Storage.
- */
 function convertToWebp(file: File, quality = 0.8): Promise<File> {
-  // Kalau sudah .webp, tidak perlu dikonversi ulang
   if (file.type === "image/webp") {
     return Promise.resolve(file);
   }
