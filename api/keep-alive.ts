@@ -2,8 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(_req: any, res: any) {
   try {
-    const url = import.meta.env.env.VITE_SUPABASE_URL;
-    const secret = import.meta.env.SUPABASE_SECRET_KEY;
+    const url = process.env.VITE_SUPABASE_URL;
+    const secret = process.env.SUPABASE_SECRET_KEY;
 
     if (!url) {
       return res.status(500).json({
