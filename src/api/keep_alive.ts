@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-export default async function handler(req: any, res: any) {
+export default async function handler(_req: any, res: any) {
   const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL!,
     import.meta.env.SUPABASE_SECRET_KEY!
