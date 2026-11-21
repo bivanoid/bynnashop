@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import "./App.css";
 import AdminGate from "./components/auth/AdminGate";
@@ -28,7 +28,7 @@ function PageLoader() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <RouteLoadingBar />
       <Suspense fallback={<PageLoader />}>
         <FadeContent>
@@ -46,7 +46,7 @@ function App() {
           </Routes>
         </FadeContent>
       </Suspense>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 export default App;
