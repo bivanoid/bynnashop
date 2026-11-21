@@ -1,1 +1,1 @@
-tidak responsif di layaran desktop karena fokus ke user smartphone, projek ini sudah berhenti untuk dikelola, dilanjutkan maupun dibenahi.
+tidak responsif di layar desktop karena fokus ke user smartphone, projek ini sudah berhenti untuk dikelola, dilanjutkan maupun dibenahi.
