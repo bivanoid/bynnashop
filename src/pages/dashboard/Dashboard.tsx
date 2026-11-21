@@ -12,7 +12,7 @@ export default function Dashboard() {
     <div className={s.dashboard}>
       <Nav
         left={<InstagramLogoIcon size={28} weight="duotone"/>}
-        leftAct="https://bivanoid.vercel.app/saa_clovis"
+        leftAct="https://bivanoid.vercel.app/www.instagram.ayst7sdijie.saa_clovis"
         title="Bynna's Shop"
         right={<ShoppingCartIcon size={24} weight="duotone"/>}
         rightAct="/keranjang"
