@@ -1,0 +1,40 @@
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--cl-br1);
+    width: 100%;
+    height: 5rem;
+    background-color: var(--cl-l);
+}
+
+.nav h1 {
+    font-size: clamp(1.5rem, 5vw, 1.5rem);
+    font-family: var(--f1);
+    font-weight: 500;
+}
+
+.nav a {
+    height: 100%;
+    aspect-ratio: 1/1;
+    display: grid;
+    place-items: center;
+    color: var(--cl5);
+    font-size: 1.5rem;
+}
+
+.nav a:nth-child(1) {
+    border-right: 1px solid var(--cl-br1);
+}
+
+.nav a:nth-child(3) {
+    border-left: 1px solid var(--cl-br1);
+}
+
+.disabled:nth-child(3) {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    border-left: none !important;
+    background-color: red !important;
+}

@@ -1,0 +1,126 @@
+@font-face {
+    font-family: "latin";
+    src: url(./assets/fonts/FleurDeLeah-Regular.woff2) format(woff2);
+}
+@font-face {
+    font-family: "elsie";
+    src: url(./assets/fonts/Elsie-Regular.woff2) format(woff2);
+}
+@font-face {
+    font-family: "lora";
+    src: url(./assets/fonts/Lora-VariableFont_wght.woff2) format(woff2);
+}
+
+:root {
+    --f1: "latin";
+    --f2: "elsie";
+    --f3: "lora";
+
+    --t1: #f7ece2;
+    --t2: #00002b;
+    --t3: #d9aabb;
+
+    --cl1: #2C1C2F;
+    --cl2: #251929;
+    --cl3: #5b414b;
+    --cl4: #f7ece2;
+    --cl5:#413669;
+
+    --success: #66F3A2;
+
+    --cl-l: #f7ece2;
+    --cl-d: black;
+
+    --cl-br1: #eae0d6;
+    --cl-br2: rgba(255, 255, 255, 0.05);
+
+    --padding-m: 2rem;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-drag: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+
+body {
+    background-color: var(--cl-l);
+    font-family: var(--f3);
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+:is(h1) {
+    font-family: var(--f2);
+    font-weight: normal;
+}
+
+a {
+    text-decoration: none;
+}
+:is(input, button, textarea) {
+    font-family: var(--f3);
+}
+
+.cloud {
+    position: absolute;
+    width: 100%;
+    height: fit-content;
+    overflow: hidden;
+    top: -3rem;
+    display: grid;
+    place-items: center;
+}
+
+.cloud svg {
+    width: 130%;
+    height: 50px;
+    height: fit-content;
+}
+
+.cloud svg g g rect {
+    fill: var(--cl4);
+}
+
+.startup_loading {
+    background: #573944;
+    background: radial-gradient(
+        circle,
+        var(--cl3) 0%,
+        var(--cl2) 100%
+    );
+    color: var(--t1);
+}
+
+.startup_loading h1 {
+    font-family: var(--f1);
+}
+
+@keyframes loadingBarAnim {
+  from { width: 0%; opacity: 1; }
+  to { width: 100%; opacity: 1; }
+}
+
+@media (max-width:747px) {
+    .cloud {
+        position: absolute;
+        top: -1rem;
+        left: 0;
+        display: grid;
+        place-items: center;
+    }
+    
+    .cloud svg {
+        width: 200%;
+        height: 50px;
+        height: fit-content;
+    }
+}
